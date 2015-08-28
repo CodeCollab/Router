@@ -16,7 +16,7 @@
         "psr-4": {"CodeCollab\\Router\\": "src/"}
     },
     "autoload-dev": {
-        "psr-4": {"CodeCollabTest\\Data\\Router\\": "test/Data/Mocks/"}
+        "psr-4": {"CodeCollabTest\\Mock\\Router\\": "test/Mock/"}
     },
     "require": {
         "php": ">=7.0-dev",

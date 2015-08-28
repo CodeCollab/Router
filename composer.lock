@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f99a8b7b997e118890fa52382c5433c6",
+    "hash": "505410fb6a7f6d7e4cd54942fd6975dd",
     "packages": [
         {
             "name": "codecollab/http",

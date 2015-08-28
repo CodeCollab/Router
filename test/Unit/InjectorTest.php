@@ -4,8 +4,8 @@ namespace CodeCollabTest\Unit\Router;
 
 use CodeCollab\Router\Injector;
 use Auryn\Injector as Auryn;
-use CodeCollabTest\Data\Router\Foo;
-use CodeCollabTest\Data\Router\Bar;
+use CodeCollabTest\Mock\Router\Foo;
+use CodeCollabTest\Mock\Router\Bar;
 
 class InjectorTest extends \PHPUnit_Framework_TestCase
 {
