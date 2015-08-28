@@ -4,9 +4,6 @@ namespace CodeCollabTest\Unit\Router;
 
 use CodeCollab\Router\Router;
 
-//use FastRoute\RouteCollector;
-//use FastRoute\Dispatcher;
-
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
     protected $router;
