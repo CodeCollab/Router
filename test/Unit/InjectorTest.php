@@ -98,7 +98,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
 
         try {
             $this->injector->execute([$this->object, 'stringParameters'], ['foo']);
-        } catch(\TypeException $e) {
+        } catch(\TypeError $e) {
             $thrown = true;
         }
 
