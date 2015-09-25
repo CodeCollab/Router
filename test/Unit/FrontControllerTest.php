@@ -240,4 +240,146 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
 
         $frontController->run($request);
     }
+
+    /**
+     * @covers CodeCollab\Router\FrontController::__construct
+     * @covers CodeCollab\Router\FrontController::run
+     * @covers CodeCollab\Router\FrontController::runRoute
+     */
+    public function testRunThrowsUpOnNonExistentController()
+    {
+        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+
+        $dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo('GET'), $this->equalTo('/found'))
+            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\NoController', 'action'], []])
+        ;
+
+        $router = $this->getMockBuilder('CodeCollab\Router\Router')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $router
+            ->expects($this->once())
+            ->method('getDispatcher')
+            ->willReturn($dispatcher)
+        ;
+
+        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $request
+            ->expects($this->at(0))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_METHOD'))
+            ->willReturn('GET')
+        ;
+
+        $request
+            ->expects($this->at(1))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_URI_PATH'))
+            ->willReturn('/found')
+        ;
+
+        $frontController = new FrontController($router, $response, $session, $injector);
+
+        $this->setExpectedException(
+            'CodeCollab\Router\ControllerNotFoundException',
+            'Trying to instantiate a non existent controller (`CodeCollabTest\Mock\Router\NoController`)'
+        );
+
+        $frontController->run($request);
+    }
+
+    /**
+     * @covers CodeCollab\Router\FrontController::__construct
+     * @covers CodeCollab\Router\FrontController::run
+     * @covers CodeCollab\Router\FrontController::runRoute
+     */
+    public function testRunThrowsUpOnNonExistentAction()
+    {
+        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+
+        $dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo('GET'), $this->equalTo('/found'))
+            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'noAction'], []])
+        ;
+
+        $router = $this->getMockBuilder('CodeCollab\Router\Router')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $router
+            ->expects($this->once())
+            ->method('getDispatcher')
+            ->willReturn($dispatcher)
+        ;
+
+        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $request
+            ->expects($this->at(0))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_METHOD'))
+            ->willReturn('GET')
+        ;
+
+        $request
+            ->expects($this->at(1))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_URI_PATH'))
+            ->willReturn('/found')
+        ;
+
+        $frontController = new FrontController($router, $response, $session, $injector);
+
+        $this->setExpectedException(
+            'CodeCollab\Router\ActionNotFoundException',
+            'Trying to call a non existent action (`CodeCollabTest\Mock\Router\ValidController::noAction`)'
+        );
+
+        $frontController->run($request);
+    }
 }

@@ -99,12 +99,27 @@ class FrontController
      * @param array $routeInfo The info of the active route
      *
      * @return \CodeCollab\Http\Response\Response The HTTP response
+     *
+     * @throws \CodeCollab\Router\ControllerNotFoundException When trying to instantiate a non existent controller
+     * @throws \CodeCollab\Router\ActionNotFoundException When trying to call a non existent action
      */
     private function runRoute(array $routeInfo): Response
     {
         list($_, $callback, $vars) = $routeInfo;
 
+        if (!class_exists($callback[0])) {
+            throw new ControllerNotFoundException(
+                'Trying to instantiate a non existent controller (`' . $callback[0] . '`)'
+            );
+        }
+
         $controller = new $callback[0]($this->response, $this->session);
+
+        if (!method_exists($controller, $callback[1])) {
+            throw new ActionNotFoundException(
+                'Trying to call a non existent action (`' . $callback[0] . '::' . $callback[1] . '`)'
+            );
+        }
 
         return $this->injector->execute([$controller, $callback[1]], $vars);
     }
