@@ -15,82 +15,72 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
     public function testRunNotFound()
     {
         $dispatcher = $this->getMock('FastRoute\Dispatcher');
-        $dispatcher->method('dispatch')->will($this->returnCallback(function($method, $name) {
-            static $count = 0;
 
-            if (!$count) {
-                \PHPUnit_Framework_Assert::assertSame('REQUEST_METHOD', $method);
-                \PHPUnit_Framework_Assert::assertSame('REQUEST_URI_PATH', $name);
-            } else {
-                \PHPUnit_Framework_Assert::assertSame('GET', $method);
-                \PHPUnit_Framework_Assert::assertSame('/not-found', $name);
-            }
+        $dispatcher
+            ->expects($this->at(0))
+            ->method('dispatch')
+            ->with($this->equalTo('POST'), $this->equalTo('/doesnt-exist'))
+            ->willReturn([\FastRoute\Dispatcher::NOT_FOUND, [], []])
+        ;
 
-            $count++;
+        $dispatcher
+            ->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->equalTo('GET'), $this->equalTo('/not-found'))
+            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+        ;
 
-            return [
-                \FastRoute\Dispatcher::NOT_FOUND,
-                [
-                    (new class {
-                        public function notFound() { return $response; }
-                    }),
-                    'notFound',
-                ],
-                [],
-            ];
-        }));
+        $router = $this->getMockBuilder('CodeCollab\Router\Router')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-        $router = (new class($dispatcher) extends \CodeCollab\Router\Router {
-            private $dispatcher;
+        $router
+            ->expects($this->once())
+            ->method('getDispatcher')
+            ->willReturn($dispatcher)
+        ;
 
-            public function __construct($dispatcher)
-            {
-                $this->dispatcher = $dispatcher;
-            }
-
-            public function getDispatcher(): \FastRoute\Dispatcher {
-                return $this->dispatcher;
-            }
-        });
-
-        $response = (new class extends \CodeCollab\Http\Response\Response {
-            public function __construct() {}
-
-            public function send(): string {
-                return 'sent!';
-            }
-        });
+        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $auryn = $this->getMockBuilder('Auryn\Injector')
+        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $injector = (new class($response) extends \CodeCollab\Router\Injector {
-            private $response;
+        $injector
+            ->expects($this->once())
+            ->method('execute')
+            ->with($this->isType('array'), $this->equalTo([]))
+            ->willReturn($response)
+        ;
 
-            public function __construct($response) {
-                $this->response = $response;
-            }
+        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-            public function execute(callable $callback, array $vars): \CodeCollab\Http\Response\Response {
-                return $this->response;
-            }
-        });
+        $request
+            ->expects($this->at(0))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_METHOD'))
+            ->willReturn('POST')
+        ;
 
-        $request = (new class extends \CodeCollab\Http\Request\Request {
-            public function __construct() {}
-            public function server(string $key): string {
-                return $key;
-            }
-        });
+        $request
+            ->expects($this->at(1))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_URI_PATH'))
+            ->willReturn('/doesnt-exist')
+        ;
 
         $frontController = new FrontController($router, $response, $session, $injector);
 
@@ -106,82 +96,72 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
     public function testRunMethodNotAllowed()
     {
         $dispatcher = $this->getMock('FastRoute\Dispatcher');
-        $dispatcher->method('dispatch')->will($this->returnCallback(function($method, $name) {
-            static $count = 0;
 
-            if (!$count) {
-                \PHPUnit_Framework_Assert::assertSame('REQUEST_METHOD', $method);
-                \PHPUnit_Framework_Assert::assertSame('REQUEST_URI_PATH', $name);
-            } else {
-                \PHPUnit_Framework_Assert::assertSame('GET', $method);
-                \PHPUnit_Framework_Assert::assertSame('/method-not-allowed', $name);
-            }
+        $dispatcher
+            ->expects($this->at(0))
+            ->method('dispatch')
+            ->with($this->equalTo('POST'), $this->equalTo('/not-allowed'))
+            ->willReturn([\FastRoute\Dispatcher::METHOD_NOT_ALLOWED, [], []])
+        ;
 
-            $count++;
+        $dispatcher
+            ->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->equalTo('GET'), $this->equalTo('/method-not-allowed'))
+            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+        ;
 
-            return [
-                \FastRoute\Dispatcher::METHOD_NOT_ALLOWED,
-                [
-                    (new class {
-                        public function methodNotAllowed() { return $response; }
-                    }),
-                    'methodNotAllowed',
-                ],
-                [],
-            ];
-        }));
+        $router = $this->getMockBuilder('CodeCollab\Router\Router')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-        $router = (new class($dispatcher) extends \CodeCollab\Router\Router {
-            private $dispatcher;
+        $router
+            ->expects($this->once())
+            ->method('getDispatcher')
+            ->willReturn($dispatcher)
+        ;
 
-            public function __construct($dispatcher)
-            {
-                $this->dispatcher = $dispatcher;
-            }
-
-            public function getDispatcher(): \FastRoute\Dispatcher {
-                return $this->dispatcher;
-            }
-        });
-
-        $response = (new class extends \CodeCollab\Http\Response\Response {
-            public function __construct() {}
-
-            public function send(): string {
-                return 'sent!';
-            }
-        });
+        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $auryn = $this->getMockBuilder('Auryn\Injector')
+        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $injector = (new class($response) extends \CodeCollab\Router\Injector {
-            private $response;
+        $injector
+            ->expects($this->once())
+            ->method('execute')
+            ->with($this->isType('array'), $this->equalTo([]))
+            ->willReturn($response)
+        ;
 
-            public function __construct($response) {
-                $this->response = $response;
-            }
+        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-            public function execute(callable $callback, array $vars): \CodeCollab\Http\Response\Response {
-                return $this->response;
-            }
-        });
+        $request
+            ->expects($this->at(0))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_METHOD'))
+            ->willReturn('POST')
+        ;
 
-        $request = (new class extends \CodeCollab\Http\Request\Request {
-            public function __construct() {}
-            public function server(string $key): string {
-                return $key;
-            }
-        });
+        $request
+            ->expects($this->at(1))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_URI_PATH'))
+            ->willReturn('/not-allowed')
+        ;
 
         $frontController = new FrontController($router, $response, $session, $injector);
 
@@ -196,73 +176,65 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
     public function testRunFoundMatchingRoute()
     {
         $dispatcher = $this->getMock('FastRoute\Dispatcher');
-        $dispatcher->method('dispatch')->will($this->returnCallback(function($method, $name) {
-            \PHPUnit_Framework_Assert::assertSame('REQUEST_METHOD', $method);
-            \PHPUnit_Framework_Assert::assertSame('REQUEST_URI_PATH', $name);
 
-            return [
-                \FastRoute\Dispatcher::FOUND,
-                [
-                    (new class {
-                        public function renderThing() { return $response; }
-                    }),
-                    'renderThing',
-                ],
-                [],
-            ];
-        }));
+        $dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo('GET'), $this->equalTo('/found'))
+            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+        ;
 
-        $router = (new class($dispatcher) extends \CodeCollab\Router\Router {
-            private $dispatcher;
+        $router = $this->getMockBuilder('CodeCollab\Router\Router')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-            public function __construct($dispatcher)
-            {
-                $this->dispatcher = $dispatcher;
-            }
+        $router
+            ->expects($this->once())
+            ->method('getDispatcher')
+            ->willReturn($dispatcher)
+        ;
 
-            public function getDispatcher(): \FastRoute\Dispatcher {
-                return $this->dispatcher;
-            }
-        });
-
-        $response = (new class extends \CodeCollab\Http\Response\Response {
-            public function __construct() {}
-
-            public function send(): string {
-                return 'sent!';
-            }
-        });
+        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $auryn = $this->getMockBuilder('Auryn\Injector')
+        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock()
         ;
 
-        $injector = (new class($response) extends \CodeCollab\Router\Injector {
-            private $response;
+        $injector
+            ->expects($this->once())
+            ->method('execute')
+            ->with($this->isType('array'), $this->equalTo([]))
+            ->willReturn($response)
+        ;
 
-            public function __construct($response) {
-                $this->response = $response;
-            }
+        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-            public function execute(callable $callback, array $vars): \CodeCollab\Http\Response\Response {
-                return $this->response;
-            }
-        });
+        $request
+            ->expects($this->at(0))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_METHOD'))
+            ->willReturn('GET')
+        ;
 
-        $request = (new class extends \CodeCollab\Http\Request\Request {
-            public function __construct() {}
-            public function server(string $key): string {
-                return $key;
-            }
-        });
+        $request
+            ->expects($this->at(1))
+            ->method('server')
+            ->with($this->equalTo('REQUEST_URI_PATH'))
+            ->willReturn('/found')
+        ;
 
         $frontController = new FrontController($router, $response, $session, $injector);
 
