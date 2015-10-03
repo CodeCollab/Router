@@ -121,7 +121,7 @@ class FrontController
             );
         }
 
-        return $this->injector->execute([$controller, $callback[1]], $vars);
+        return $this->injector->execute([$controller, $callback[1]], array_map('urldecode', $vars));
     }
 
     /**
