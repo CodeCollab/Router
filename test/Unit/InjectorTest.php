@@ -93,7 +93,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $thrown = false;
 
-        if (version_compare(PHP_VERSION, '7.1.0') >= 0) {
+        if (version_compare(PHP_VERSION, '7.1.0a') >= 0) {
             $this->expectException(\Error::class);
         } else {
             $this->expectException(\TypeError::class);
