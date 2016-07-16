@@ -3,6 +3,8 @@
 namespace CodeCollabTest\Unit\Router;
 
 use CodeCollab\Router\Router;
+use FastRoute\RouteCollector;
+use FastRoute\Dispatcher;
 
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,10 +12,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $routeCollector = $this->getMockBuilder('FastRoute\RouteCollector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $routeCollector = $this->createMock(RouteCollector::class);
 
         $routeCollector->method('getData')->willReturn(['foo' => 'bar']);
 
@@ -22,7 +21,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             function($data) {
                 \PHPUnit_Framework_Assert::assertSame(['foo' => 'bar'], $data);
 
-                return $this->getMock('FastRoute\Dispatcher');
+                return $this->createMock(Dispatcher::class);
             },
             TEST_DATA_DIR . '/cache/routes.php'
         );
@@ -40,7 +39,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetReturnsSelf()
     {
-        $this->assertInstanceOf('CodeCollab\Router\Router', $this->router->get('/', []));
+        $this->assertInstanceOf(Router::class, $this->router->get('/', []));
     }
 
     /**
@@ -50,7 +49,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testPostReturnsSelf()
     {
-        $this->assertInstanceOf('CodeCollab\Router\Router', $this->router->post('/', []));
+        $this->assertInstanceOf(Router::class, $this->router->post('/', []));
     }
 
     /**
@@ -59,7 +58,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRouteReturnsSelf()
     {
-        $this->assertInstanceOf('CodeCollab\Router\Router', $this->router->addRoute('CUSTOMVERB', '/', []));
+        $this->assertInstanceOf(Router::class, $this->router->addRoute('CUSTOMVERB', '/', []));
     }
 
     /**
@@ -73,7 +72,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
 
-        $this->assertInstanceOf('FastRoute\Dispatcher', $this->router->get('/', [])->getDispatcher());
+        $this->assertInstanceOf(Dispatcher::class, $this->router->get('/', [])->getDispatcher());
 
         $this->assertTrue(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
     }
@@ -87,10 +86,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDispatcherExistingFileDoNotReload()
     {
-        $routeCollector = $this->getMockBuilder('FastRoute\RouteCollector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $routeCollector = $this->createMock(RouteCollector::class);
 
         $routeCollector->method('getData')->willReturn(['foo' => 'bar']);
 
@@ -99,7 +95,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             function($data) {
                 \PHPUnit_Framework_Assert::assertSame(['foo' => 'baz'], $data);
 
-                return $this->getMock('FastRoute\Dispatcher');
+                return $this->createMock(Dispatcher::class);
             },
             TEST_DATA_DIR . '/cache/routes.php'
         );
@@ -110,7 +106,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
 
-        $this->assertInstanceOf('FastRoute\Dispatcher', $router->get('/', [])->getDispatcher());
+        $this->assertInstanceOf(Dispatcher::class, $router->get('/', [])->getDispatcher());
 
         $this->assertTrue(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
 
@@ -128,10 +124,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDispatcherExistingFileDoReload()
     {
-        $routeCollector = $this->getMockBuilder('FastRoute\RouteCollector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $routeCollector = $this->createMock(RouteCollector::class);
 
         $routeCollector->method('getData')->willReturn(['foo' => 'bar']);
 
@@ -140,7 +133,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             function($data) {
                 \PHPUnit_Framework_Assert::assertSame(['foo' => 'bar'], $data);
 
-                return $this->getMock('FastRoute\Dispatcher');
+                return $this->createMock(Dispatcher::class);
             },
             TEST_DATA_DIR . '/cache/routes.php',
             true
@@ -152,7 +145,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
 
-        $this->assertInstanceOf('FastRoute\Dispatcher', $router->get('/', [])->getDispatcher());
+        $this->assertInstanceOf(Dispatcher::class, $router->get('/', [])->getDispatcher());
 
         $this->assertTrue(file_exists(TEST_DATA_DIR . '/cache/routes.php'));
 

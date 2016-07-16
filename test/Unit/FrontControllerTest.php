@@ -3,6 +3,16 @@
 namespace CodeCollabTest\Unit\Router;
 
 use CodeCollab\Router\FrontController;
+use FastRoute\Dispatcher;
+use CodeCollabTest\Mock\Router\ValidController;
+use CodeCollabTest\Mock\Router\NoController;
+use CodeCollab\Router\Router;
+use CodeCollab\Http\Response\Response;
+use CodeCollab\Http\Session\Native;
+use CodeCollab\Router\Injector;
+use CodeCollab\Http\Request\Request;
+use CodeCollab\Router\ControllerNotFoundException;
+use CodeCollab\Router\ActionNotFoundException;
 
 class FrontControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,26 +24,23 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunNotFound()
     {
-        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+        $dispatcher = $this->createMock(Dispatcher::class);
 
         $dispatcher
             ->expects($this->at(0))
             ->method('dispatch')
             ->with($this->equalTo('POST'), $this->equalTo('/doesnt-exist'))
-            ->willReturn([\FastRoute\Dispatcher::NOT_FOUND, [], []])
+            ->willReturn([Dispatcher::NOT_FOUND, [], []])
         ;
 
         $dispatcher
             ->expects($this->at(1))
             ->method('dispatch')
             ->with($this->equalTo('GET'), $this->equalTo('/not-found'))
-            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+            ->willReturn([Dispatcher::FOUND, [ValidController::class, 'action'], []])
         ;
 
-        $router = $this->getMockBuilder('CodeCollab\Router\Router')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $router = $this->createMock(Router::class);
 
         $router
             ->expects($this->once())
@@ -41,20 +48,9 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dispatcher)
         ;
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
+        $session  = $this->createMock(Native::class);
+        $injector = $this->createMock(Injector::class);
 
         $injector
             ->expects($this->once())
@@ -63,10 +59,7 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($response)
         ;
 
-        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $request = $this->createMock(Request::class);
 
         $request
             ->expects($this->at(0))
@@ -95,26 +88,23 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunMethodNotAllowed()
     {
-        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+        $dispatcher = $this->createMock(Dispatcher::class);
 
         $dispatcher
             ->expects($this->at(0))
             ->method('dispatch')
             ->with($this->equalTo('POST'), $this->equalTo('/not-allowed'))
-            ->willReturn([\FastRoute\Dispatcher::METHOD_NOT_ALLOWED, [], []])
+            ->willReturn([Dispatcher::METHOD_NOT_ALLOWED, [], []])
         ;
 
         $dispatcher
             ->expects($this->at(1))
             ->method('dispatch')
             ->with($this->equalTo('GET'), $this->equalTo('/method-not-allowed'))
-            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+            ->willReturn([Dispatcher::FOUND, [ValidController::class, 'action'], []])
         ;
 
-        $router = $this->getMockBuilder('CodeCollab\Router\Router')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $router = $this->createMock(Router::class);
 
         $router
             ->expects($this->once())
@@ -122,20 +112,9 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dispatcher)
         ;
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
+        $session  = $this->createMock(Native::class);
+        $injector = $this->createMock(Injector::class);
 
         $injector
             ->expects($this->once())
@@ -144,10 +123,7 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($response)
         ;
 
-        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $request = $this->createMock(Request::class);
 
         $request
             ->expects($this->at(0))
@@ -175,19 +151,16 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunFoundMatchingRoute()
     {
-        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+        $dispatcher = $this->createMock(Dispatcher::class);
 
         $dispatcher
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->equalTo('GET'), $this->equalTo('/found'))
-            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'action'], []])
+            ->willReturn([Dispatcher::FOUND, [ValidController::class, 'action'], []])
         ;
 
-        $router = $this->getMockBuilder('CodeCollab\Router\Router')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $router = $this->createMock(Router::class);
 
         $router
             ->expects($this->once())
@@ -195,20 +168,9 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dispatcher)
         ;
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
+        $session  = $this->createMock(Native::class);
+        $injector = $this->createMock(Injector::class);
 
         $injector
             ->expects($this->once())
@@ -217,10 +179,7 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($response)
         ;
 
-        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $request = $this->createMock(Request::class);
 
         $request
             ->expects($this->at(0))
@@ -248,19 +207,16 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunThrowsUpOnNonExistentController()
     {
-        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+        $dispatcher = $this->createMock(Dispatcher::class);
 
         $dispatcher
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->equalTo('GET'), $this->equalTo('/found'))
-            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\NoController', 'action'], []])
+            ->willReturn([Dispatcher::FOUND, [NoController::class, 'action'], []])
         ;
 
-        $router = $this->getMockBuilder('CodeCollab\Router\Router')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $router = $this->createMock(Router::class);
 
         $router
             ->expects($this->once())
@@ -268,25 +224,10 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dispatcher)
         ;
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
+        $session  = $this->createMock(Native::class);
+        $injector = $this->createMock(Injector::class);
+        $request  = $this->createMock(Request::class);
 
         $request
             ->expects($this->at(0))
@@ -304,10 +245,8 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
 
         $frontController = new FrontController($router, $response, $session, $injector);
 
-        $this->setExpectedException(
-            'CodeCollab\Router\ControllerNotFoundException',
-            'Trying to instantiate a non existent controller (`CodeCollabTest\Mock\Router\NoController`)'
-        );
+        $this->expectException(ControllerNotFoundException::class);
+        $this->expectExceptionMessage('Trying to instantiate a non existent controller (`CodeCollabTest\Mock\Router\NoController`)');
 
         $frontController->run($request);
     }
@@ -319,19 +258,16 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunThrowsUpOnNonExistentAction()
     {
-        $dispatcher = $this->getMock('FastRoute\Dispatcher');
+        $dispatcher = $this->createMock(Dispatcher::class);
 
         $dispatcher
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->equalTo('GET'), $this->equalTo('/found'))
-            ->willReturn([\FastRoute\Dispatcher::FOUND, ['CodeCollabTest\Mock\Router\ValidController', 'noAction'], []])
+            ->willReturn([Dispatcher::FOUND, [ValidController::class, 'noAction'], []])
         ;
 
-        $router = $this->getMockBuilder('CodeCollab\Router\Router')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $router = $this->createMock(Router::class);
 
         $router
             ->expects($this->once())
@@ -339,25 +275,10 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dispatcher)
         ;
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $session = $this->getMockBuilder('CodeCollab\Http\Session\Native')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $injector = $this->getMockBuilder('CodeCollab\Router\Injector')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $request = $this->getMockBuilder('CodeCollab\Http\Request\Request')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
+        $session  = $this->createMock(Native::class);
+        $injector = $this->createMock(Injector::class);
+        $request  = $this->createMock(Request::class);
 
         $request
             ->expects($this->at(0))
@@ -375,10 +296,8 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
 
         $frontController = new FrontController($router, $response, $session, $injector);
 
-        $this->setExpectedException(
-            'CodeCollab\Router\ActionNotFoundException',
-            'Trying to call a non existent action (`CodeCollabTest\Mock\Router\ValidController::noAction`)'
-        );
+        $this->expectException(ActionNotFoundException::class);
+        $this->expectExceptionMessage('Trying to call a non existent action (`CodeCollabTest\Mock\Router\ValidController::noAction`)');
 
         $frontController->run($request);
     }

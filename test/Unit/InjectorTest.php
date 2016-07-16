@@ -6,6 +6,7 @@ use CodeCollab\Router\Injector;
 use Auryn\Injector as Auryn;
 use CodeCollabTest\Mock\Router\Foo;
 use CodeCollabTest\Mock\Router\Bar;
+use CodeCollab\Http\Response\Response;
 
 class InjectorTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,11 +18,7 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $this->injector = new Injector(new Auryn());
 
-        $response = $this->getMockBuilder('CodeCollab\Http\Response\Response')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock()
-        ;
+        $response = $this->createMock(Response::class);
 
         $this->object = (new class($response) {
             private $response;
@@ -68,8 +65,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithoutParameters()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'withoutParameters'], [])
         );
     }
@@ -81,8 +78,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithStringParameters()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'stringParameters'], ['foo', 'bar'])
         );
     }
@@ -112,8 +109,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithObjectParameters()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'objectParameters'], [])
         );
     }
@@ -125,8 +122,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithObjectAndStringParametersObjectsFirst()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'objectAndStringParametersObjectsFirst'], ['foo', 'bar'])
         );
     }
@@ -138,8 +135,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithObjectAndStringParametersStringsFirst()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'objectAndStringParametersStringsFirst'], ['foo', 'bar'])
         );
     }
@@ -151,8 +148,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithObjectAndStringParametersObjectFirstMixed()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'objectAndStringParametersObjectFirstMixed'], ['foo', 'bar'])
         );
     }
@@ -164,8 +161,8 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithObjectAndStringParametersStringFirstMixed()
     {
-        $this->assertInstanceof(
-            'CodeCollab\Http\Response\Response',
+        $this->assertInstanceOf(
+            Response::class,
             $this->injector->execute([$this->object, 'objectAndStringParametersStringFirstMixed'], ['foo', 'bar'])
         );
     }
