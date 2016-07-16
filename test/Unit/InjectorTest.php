@@ -93,13 +93,13 @@ class InjectorTest extends \PHPUnit_Framework_TestCase
     {
         $thrown = false;
 
-        try {
-            $this->injector->execute([$this->object, 'stringParameters'], ['foo']);
-        } catch(\TypeError $e) {
-            $thrown = true;
+        if (version_compare(PHP_VERSION, '7.1.0') >= 0) {
+            $this->expectException(\Error::class);
+        } else {
+            $this->expectException(\TypeError::class);
         }
 
-        $this->assertTrue($thrown);
+        $this->injector->execute([$this->object, 'stringParameters'], ['foo']);
     }
 
     /**
