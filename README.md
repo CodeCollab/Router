@@ -8,6 +8,16 @@ Router package of the CodeCollab project
 
 PHP7+
 
+## Installation
+
+Include the library in your project using composer:
+
+    {
+        "require-dev": {
+            "codecollab/router": "^1"
+        }
+    }
+
 ## Contributing
 
 [How to contribute][contributing]
@@ -15,6 +25,11 @@ PHP7+
 ## License
 
 [MIT][mit]
+
+
+## Security issues
+
+If you found a security issue please contact directly by mail instead of using the issue tracker at codecollab-security@pieterhordijk.com
 
 [contributing]: https://github.com/CodeCollab/Router/blob/master/CONTRIBUTING.md
 [mit]: http://spdx.org/licenses/MIT

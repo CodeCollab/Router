@@ -1,7 +1,7 @@
 {
     "name": "codecollab/router",
     "description": "Router package of the CodeCollab project",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "library",
     "keywords": ["codecollab", "http", "network", "router"],
     "homepage": "https://github.com/CodeCollab/Router",
