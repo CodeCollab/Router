@@ -25,6 +25,8 @@
         <whitelist>
             <directory suffix=".php">src/</directory>
             <exclude>
+                <file>src/ActionNotFoundException.php</file>
+                <file>src/ControllerNotFoundException.php</file>
             </exclude>
         </whitelist>
     </filter>
