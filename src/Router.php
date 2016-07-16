@@ -28,22 +28,22 @@ use FastRoute\Dispatcher;
 class Router
 {
     /**
-     * @param \FastRoute\RouteCollector Collector for routes defined in the system
+     * @var \FastRoute\RouteCollector Collector for routes defined in the system
      */
     private $routeCollector;
 
     /**
-     * @param callable Factory for the dispatcher
+     * @var callable Factory for the dispatcher
      */
     private $dispatcherFactory;
 
     /**
-     * @param string Filename of the cache file
+     * @var string Filename of the cache file
      */
     private $cacheFile;
 
     /**
-     * @param bool Whether to invalidate and reload the cache
+     * @var bool Whether to invalidate and reload the cache
      */
     private $forceReload;
 
@@ -120,6 +120,7 @@ class Router
         if ($this->forceReload || !file_exists($this->cacheFile)) {
             $dispatchData = $this->buildCache();
         } else {
+            /** @noinspection PhpIncludeInspection */
             $dispatchData = require $this->cacheFile;
         }
 
