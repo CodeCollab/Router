@@ -105,7 +105,12 @@ class FrontController
      */
     private function runRoute(array $routeInfo): Response
     {
+        /** @noinspection PhpUnusedLocalVariableInspection */
         list($_, $callback, $vars) = $routeInfo;
+
+        $vars = array_filter($vars, function($var) {
+            return strpos($var, '_') !== 0;
+        });
 
         if (!class_exists($callback[0])) {
             throw new ControllerNotFoundException(
