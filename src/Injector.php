@@ -17,7 +17,6 @@ namespace CodeCollab\Router;
 
 use Auryn\Injector as Auryn;
 use CodeCollab\Http\Response\Response;
-use CodeCollab\Http\Response\Request;
 
 /**
  * Injector for controller methods
