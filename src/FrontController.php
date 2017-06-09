@@ -110,7 +110,7 @@ class FrontController
 
         $vars = array_filter($vars, function($var) {
             return strpos($var, '_') !== 0;
-        });
+        }, ARRAY_FILTER_USE_KEY);
 
         if (!class_exists($callback[0])) {
             throw new ControllerNotFoundException(
